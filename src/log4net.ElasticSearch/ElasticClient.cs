@@ -33,6 +33,7 @@ namespace log4net.ElasticSearch
     {
         public string Server { get; private set; }
         public int Port { get; private set; }
+        public int RequestTimeout { get; private set; }
         public bool Ssl { get; private set; }
         public bool AllowSelfSignedServerCert { get; private set; }
         public string BasicAuthUsername { get; private set; }
@@ -42,17 +43,18 @@ namespace log4net.ElasticSearch
         private readonly string _url;
         private readonly string _credentials;
 
-        public WebElasticClient(string server, int port)
-            : this(server, port, false, false, string.Empty, string.Empty)
+        public WebElasticClient(string server, int port, int requestTimeout)
+            : this(server, port, requestTimeout, false, false, string.Empty, string.Empty)
         {
         }
 
-        public WebElasticClient(string server, int port,
+        public WebElasticClient(string server, int port, int requestTimeout,
                                 bool ssl, bool allowSelfSignedServerCert, 
                                 string basicAuthUsername, string basicAuthPassword)
         {
             Server = server;
             Port = port;
+            RequestTimeout = requestTimeout;
             ServicePointManager.Expect100Continue = false;
 
             // SSL related properties
@@ -120,7 +122,7 @@ namespace log4net.ElasticSearch
             var webRequest = WebRequest.Create(string.Concat(_url, "_bulk"));
             webRequest.ContentType = "text/plain";
             webRequest.Method = "POST";
-            webRequest.Timeout = 10000;
+            webRequest.Timeout = RequestTimeout;
             SetBasicAuthHeader(webRequest);
             SendRequest(webRequest, requestString);
             return webRequest;

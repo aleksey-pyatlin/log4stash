@@ -24,6 +24,7 @@ namespace log4net.ElasticSearch
         public FixFlags FixedFields { get; set; }
 
         public int BulkSize { get; set; }
+        public int RequestTimeout { get; set; }
         public int BulkIdleTimeout { get; set; }
         public int TimeoutToWaitForTimer { get; set; }
 
@@ -54,6 +55,7 @@ namespace log4net.ElasticSearch
             FixedFields = FixFlags.Partial;
 
             BulkSize = 2000;
+            RequestTimeout = 10000;
             BulkIdleTimeout = 5000;
             TimeoutToWaitForTimer = 5000;
 
@@ -71,7 +73,7 @@ namespace log4net.ElasticSearch
 
         public override void ActivateOptions()
         {
-            _client = new WebElasticClient(Server, Port, Ssl, AllowSelfSignedServerCert, BasicAuthUsername, BasicAuthPassword);
+            _client = new WebElasticClient(Server, Port, RequestTimeout, Ssl, AllowSelfSignedServerCert, BasicAuthUsername, BasicAuthPassword);
 
             if (Template != null && Template.IsValid)
             {
